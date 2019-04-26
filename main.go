@@ -1,10 +1,11 @@
 package gosfmessagecounter
 
 import (
-	f "gosf"
 	"log"
 	"strconv"
 	"time"
+
+	f "github.com/ambelovsky/gosf"
 )
 
 var appStartTime int64
