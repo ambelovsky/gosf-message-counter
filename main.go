@@ -25,7 +25,6 @@ type Plugin struct{}
 // Activate is an aspect-oriented modular plugin requirement
 func (p Plugin) Activate(app *f.AppSettings) {
 	active = true
-	(*app)["message-counter"] = new(AppMethods)
 	go process()
 }
 
