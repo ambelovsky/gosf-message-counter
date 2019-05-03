@@ -23,14 +23,14 @@ var active bool
 type Plugin struct{}
 
 // Activate is an aspect-oriented modular plugin requirement
-func (p Plugin) Activate(app *map[string]interface{}, config *map[string]interface{}) {
+func (p Plugin) Activate(app *f.AppSettings) {
 	active = true
 	(*app)["message-counter"] = new(AppMethods)
 	go process()
 }
 
 // Deactivate is an aspect-oriented modular plugin requirement
-func (p Plugin) Deactivate(app *map[string]interface{}, config *map[string]interface{}) {
+func (p Plugin) Deactivate(app *f.AppSettings) {
 	active = false
 }
 
