@@ -3,9 +3,9 @@ package gosfmessagecounter
 import (
 	"log"
 	"strconv"
+	"sync"
 	"time"
 
-	"github.com/ambelovsky/gosf"
 	f "github.com/ambelovsky/gosf"
 )
 
@@ -18,6 +18,9 @@ var periodStartTime int64
 var currTime int64
 var messagesPerSecond float64
 
+var muxMessagesPerSecond sync.Mutex
+var muxMessageCount sync.Mutex
+
 var active bool
 
 // GetMessagesPerSecond returns the last recorded number of messages per second
@@ -27,6 +30,9 @@ func GetMessagesPerSecond() float64 {
 
 // Tick records that a single message has been processed
 func Tick() {
+	muxMessageCount.Lock()
+	defer muxMessageCount.Unlock()
+
 	totalMessageCount++
 	periodMessageCount++
 }
@@ -35,6 +41,9 @@ func Tick() {
 func process() {
 	for active {
 		time.Sleep(10 * time.Second)
+
+		muxMessagesPerSecond.Lock()
+		defer muxMessagesPerSecond.Unlock()
 
 		currTime = time.Now().UnixNano()
 		messagesPerSecond = float64(periodMessageCount) / (float64((currTime - periodStartTime)) / 1000000000)
@@ -73,6 +82,6 @@ func init() {
 		Tick()
 	})
 
-	gosf.RegisterPlugin(new(Plugin))
+	f.RegisterPlugin(new(Plugin))
 	log.Println("Message Counter Plugin Initialized")
 }
